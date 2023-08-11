@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create news</title>
+</head>
+
+<body>
+    <form action="{% url 'news:create_news' %}" method="post">
+        {% csrf_token %}
+
+        <label>News title: </label>
+        <input type="text"><br>
+
+        <label>News content: </label>
+        <input type="text"><br>
+        
+    </form>
+</body>
+
+</html>
