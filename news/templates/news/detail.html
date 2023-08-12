@@ -8,16 +8,20 @@
 </head>
 
 <body>
-    <form action="{% url 'news:create_news' %}" method="post">
-        {% csrf_token %}
+    <h1>{{ news.title }}</h1>
+    <p>{{ news.content }}</p>
+    <p>{{ news.created_at }}</p>
 
-        <label>News title: </label>
-        <input type="text"><br>
+    <ul>
+        {% for comment in comments %} Comments:
+        <li>
+            {{ comment.content }}
+        </li>
+        {% endfor %}
+    </ul>
 
-        <label>News content: </label>
-        <input type="text"><br>
-        
-    </form>
+    <a href="% url 'news:add_comment' news_id%">Add new comment</a>
+
 </body>
 
 </html>
