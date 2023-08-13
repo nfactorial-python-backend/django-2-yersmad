@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404, reverse
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 
 from .models import News, Comment
@@ -26,16 +26,15 @@ def detail(request, news_id):
         return render(request, "news/detail.html", context)
 
 def post_comment(request, news_id):
-    comments = request.POST["comments"]
+    if request.method == "POST":
+        db_news = News.objects.get(pk=news_id)
+        comment = request.POST["comment"]
+        new_comment = Comment(content=comment, news_id=news_id)
+        new_comment.save()
 
-    if comments != "":
-        news = get_object_or_404(News, pk=news_id)
-        db_comments = Comment(content=comments, news=news)
-        db_comments.save()
+        return HttpResponseRedirect(reverse("news:detail", args=(db_news.id,)))
 
-        return HttpResponseRedirect(reverse("news:post_comment", args=news_id,))
-    
-    return HttpResponseRedirect(reverse("news:post_comment", args=news_id,))
+    return render(request, "news/post_comment.html", {"news_id": news_id})
 
 def post_news(request):
     if request.method == "POST":
@@ -44,6 +43,6 @@ def post_news(request):
         news = News(title=title, content=content)
         news.save()
 
-        return HttpResponseRedirect(reverse("news:post_news", args=news.id))
+        return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))
 
     return render(request, "news/post_news.html")

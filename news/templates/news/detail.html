@@ -20,7 +20,7 @@
         {% endfor %}
     </ul>
 
-    <a href="% url 'news:add_comment' news_id%">Add new comment</a>
+    <a href="{% url 'news:post_comment' news.id %}">Add new comment</a>
 
 </body>
 
