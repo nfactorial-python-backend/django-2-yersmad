@@ -13,7 +13,7 @@ def index(request):
 def detail(request, news_id):
     news = get_object_or_404(News, pk=news_id)
     try:
-        comments = Comment.objects.get(news_id=news_id)
+        comments = list(Comment.objects.filter(news_id=news_id).all())
     except Comment.DoesNotExist:
         comments = None
 
@@ -21,7 +21,7 @@ def detail(request, news_id):
         context = {"news": news}
         return render(request, "news/detail.html", context)
     else:
-        comments = get_list_or_404(Comment, news_id=news_id)
+        comments = list(Comment.objects.filter(news_id=news_id).order_by("-created_at").all())
         context = {"news": news, "comments": comments}
         return render(request, "news/detail.html", context)
 
@@ -30,8 +30,10 @@ def post_comment(request, news_id):
         db_news = News.objects.get(pk=news_id)
         comment = request.POST["comment"]
         new_comment = Comment(content=comment, news_id=news_id)
+        db_news.has_comments = True
         new_comment.save()
-
+        db_news.save()
+        
         return HttpResponseRedirect(reverse("news:detail", args=(db_news.id,)))
 
     return render(request, "news/post_comment.html", {"news_id": news_id})

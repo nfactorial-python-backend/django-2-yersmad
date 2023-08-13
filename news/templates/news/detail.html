@@ -12,8 +12,8 @@
     <p>{{ news.content }}</p>
     <p>{{ news.created_at }}</p>
 
-    <ul>
-        {% for comment in comments %} Comments:
+    <ul>Comments:
+        {% for comment in comments %}
         <li>
             {{ comment.content }}
         </li>
