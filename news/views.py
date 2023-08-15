@@ -1,14 +1,17 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404, reverse
 from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.views import View
+
 
 from .models import News, Comment
+from .forms import UpdateNewsForm
 
 
 # Create your views here.
 def index(request):
     news = get_list_or_404(News.objects.order_by("-created_at"))
     context = {"news": news}
-    return render(request, "news/index.html", context)
+    return render(request, "news/news.html", context)
 
 def detail(request, news_id):
     news = get_object_or_404(News, pk=news_id)
@@ -48,3 +51,15 @@ def post_news(request):
         return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))
 
     return render(request, "news/post_news.html")
+
+class UpdateNewsView(View):
+    def get(self, request, news_id):
+        form = UpdateNewsForm()
+        return render(request, "news/update_news.html", {"form": form})
+
+    def post(self, request, news_id):
+        form = UpdateNewsForm(request.POST)
+        news = News(title=form.title, content=form.content)
+        news.save()
+
+        return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))

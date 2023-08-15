@@ -1,27 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "news/base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create news</title>
-</head>
+{% block title %} News number: {{ news.id }} {% endblock %}
 
-<body>
-    <h1>{{ news.title }}</h1>
-    <p>{{ news.content }}</p>
-    <p>{{ news.created_at }}</p>
+{% block content %}
+<h1>{{ news.title }}</h1>
+<p>{{ news.content }}</p>
+<p>{{ news.created_at }}</p>
+<a href="{% url 'news:edit_news' news.id %}">Edit this news</a>
 
-    <ul>Comments:
-        {% for comment in comments %}
-        <li>
-            {{ comment.content }}
-        </li>
-        {% endfor %}
-    </ul>
 
-    <a href="{% url 'news:post_comment' news.id %}">Add new comment</a>
+<ul>Comments:
+    {% for comment in comments %}
+    <li>
+        {{ comment.content }}
+    </li>
+    {% endfor %}
+</ul>
 
-</body>
-
-</html>
+<a href="{% url 'news:post_comment' news.id %}">Add new comment</a>
+{% endblock %}

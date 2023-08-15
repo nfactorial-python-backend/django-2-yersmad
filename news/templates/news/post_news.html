@@ -1,23 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "news/base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add new news</title>
-</head>
+{% block title %} Create news {% endblock %}
 
-<body>
+{% block content %} 
     <form action="{% url 'news:post_news' %}" method="post">
         {% csrf_token %}
-
+    
         <label>Title: </label>
         <input type="text" name="title"><br>
-
+    
         <label>Content: </label>
         <input type="text" name="content"><br>
         <input type="submit" value="Submit">
     </form>
-</body>
-
-</html>
+{% endblock %}

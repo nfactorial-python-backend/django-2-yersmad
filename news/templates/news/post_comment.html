@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'news/base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add new comment</title>
-</head>
+{% block title %} Create comment {% endblock %}
 
-<body>
+{% block content %}
     <form action="{% url 'news:post_comment' news_id %}" method="post">
         {% csrf_token %}
 
@@ -16,7 +11,4 @@
         <input type="submit" value="Submit" />
 
     </form>
-
-</body>
-
-</html>
+{% endblock %}
