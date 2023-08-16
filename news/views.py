@@ -4,7 +4,7 @@ from django.views import View
 
 
 from .models import News, Comment
-from .forms import UpdateNewsForm
+from .forms import NewsForm
 
 
 # Create your views here.
@@ -43,23 +43,26 @@ def post_comment(request, news_id):
 
 def post_news(request):
     if request.method == "POST":
-        title = request.POST["title"]
-        content = request.POST["content"]
-        news = News(title=title, content=content)
-        news.save()
+        form = NewsForm(request.POST)
+        if form.is_valid():
+            news = News(title=form.cleaned_data["title"], content=form.cleaned_data["content"])
+            news.save()
 
-        return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))
+            return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))
 
     return render(request, "news/post_news.html")
 
 class UpdateNewsView(View):
     def get(self, request, news_id):
+        news = get_object_or_404(News, pk=news_id)
         form = UpdateNewsForm()
-        return render(request, "news/update_news.html", {"form": form})
+        return render(request, "news/update_news.html", {"form": form, "news": news})
 
     def post(self, request, news_id):
-        form = UpdateNewsForm(request.POST)
-        news = News(title=form.title, content=form.content)
-        news.save()
+        news = get_object_or_404(News, pk=news_id)
+        form = NewsForm(request.POST, instance=news)
+        if form.is_valid():
+            news = News(title=form.cleaned_data["title"], content=form.cleaned_data["content"])
+            news.save()
 
-        return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))
+            return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))

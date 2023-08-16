@@ -1,5 +1,8 @@
 from django import forms
 
-class UpdateNewsForm(forms.Form):
-    title = forms.CharField(max_length=50)
-    content = forms.CharField(max_length=150)
+from .models import News
+
+class NewsForm(forms.ModelForm):
+    class Meta:
+        model = News
+        fields = ('title', 'content',)
