@@ -55,14 +55,17 @@ def post_news(request):
 class UpdateNewsView(View):
     def get(self, request, news_id):
         news = get_object_or_404(News, pk=news_id)
-        form = UpdateNewsForm()
+        form = NewsForm()
         return render(request, "news/update_news.html", {"form": form, "news": news})
 
     def post(self, request, news_id):
         news = get_object_or_404(News, pk=news_id)
         form = NewsForm(request.POST, instance=news)
         if form.is_valid():
-            news = News(title=form.cleaned_data["title"], content=form.cleaned_data["content"])
+            title = form.cleaned_data["title"]
+            content = form.cleaned_data["content"]
+            news.title = title
+            news.content = content
             news.save()
 
             return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))
