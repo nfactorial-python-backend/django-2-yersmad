@@ -3,16 +3,37 @@
 {% block title %} {{ news.title }} {% endblock %}
 
 {% block content %}
-<h1>{{ news.title }}</h1>
-<p>{{ news.content }}</p>
-<p>{{ news.created_at }}</p>
+<div>
+    <h1>{{ news.title }}</h1>
+    <p>{{ news.content }}</p>
+    <p>{{ news.created_at }}</p>
+
+</div>
+
+{% if user == news.author or perms.news.delete_news %}
 <a href="{% url 'news:edit_news' news.id %}">Edit this news</a>
+
+<form action="{% url 'news:delete_news' news.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete this news</button>
+</form>
+
+{% endif %}
 
 
 <ul>Comments:
     {% for comment in comments %}
     <li>
         {{ comment.content }}
+
+        {% if user == comment.author or perms.comment.delete_comment %}
+
+        <form action="{% url 'news:delete_comment' news.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete this comment</button>
+        </form>
+
+        {% endif %}
     </li>
     {% endfor %}
 </ul>

@@ -2,7 +2,7 @@
 
 {% block title %} Create news {% endblock %}
 
-{% block content %} 
+{% block content %}
     <form action="{% url 'news:post_news' %}" method="post">
         {% csrf_token %}
     

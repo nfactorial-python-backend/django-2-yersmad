@@ -22,6 +22,7 @@ from news.views import sign_up
 urlpatterns = [
     path("", include("django.contrib.auth.urls")),
     path('sign-up/', sign_up, name='sign_up'),
+    path("accounts/", include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
     path('news/', include('news.urls')),
     path("__debug__/", include("debug_toolbar.urls")),

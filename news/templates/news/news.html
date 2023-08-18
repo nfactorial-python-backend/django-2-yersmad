@@ -1,21 +1,34 @@
-{% extends 'news/base.html' %}
+{% extends "news/base.html" %}
 
 {% block title %} Latest news {% endblock %}
 
 {% block content %}
-    <h2>Latest news: </h2>
-
     <ol>
         {% for new in news %}
-
-        <li>
-            <a href="{% url 'news:detail' new.id %}">
-                {{ new.title }}
-            </a>
-        </li>
-
+            <div class="card mt-2">
+                <div class="card-header"><strong>@{{ new.author.username }}</strong></div>
+                <div class="card-body d-flex flex-row justify-content-between">
+                  <div>
+                    <h5 class="card-title">
+                        <a href="{% url 'news:detail' new.id %}">{{ new.title }}</a>
+                    </h5>
+                  </div>
+                  <div>
+                    {% if user == news.author or perms.news.delete_news %}
+                        <form action="{% url 'news:delete_news' new.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger" >Delete this news</button>
+                        </form>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="card-footer text-muted">{{new.created_at}}</div>
+              </div>
+        {% empty %}
+            <p>No news</p>
         {% endfor %}
+    
+                <a href="{% url 'news:post_news' %}">Create news</a>
+            
     </ol>
-
-    <a href="{% url 'news:post_news' %}">Create new news</a>
 {% endblock %}
