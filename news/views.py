@@ -1,13 +1,29 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404, reverse
+from django.shortcuts import render, get_object_or_404, get_list_or_404, reverse, redirect
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.views import View
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 
 
 from .models import News, Comment
-from .forms import NewsForm
+from .forms import NewsForm, SignUpForm
 
 
 # Create your views here.
+def sign_up(request):
+   if request.method == 'POST':
+       form = SignUpForm(request.POST)
+       if form.is_valid():
+           user = form.save()
+           login(request, user)
+           return redirect('/news')
+   else:
+       form = SignUpForm()
+
+   return render(request, 'registration/sign_up.html', {"form": form})
+
+
+@login_required(login_url="/login")
 def index(request):
     news = get_list_or_404(News.objects.order_by("-created_at"))
     context = {"news": news}
