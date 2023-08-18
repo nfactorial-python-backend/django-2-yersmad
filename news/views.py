@@ -4,9 +4,16 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
 
+from rest_framework import generics, mixins, status
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 
 from .models import News, Comment
 from .forms import NewsForm, SignUpForm
+from .serializers import NewsSerializer
 
 
 # Create your views here.
@@ -135,3 +142,43 @@ def delete_comment(request, comment_id):
             comment.delete()
 
         return redirect(reverse("news:news"))
+
+
+@permission_classes([IsAuthenticated])
+class NewsDetailView(APIView):
+    def get_object(self, pk):
+       try:
+           return News.objects.get(pk=pk)
+       except News.DoesNotExist:
+           return None
+
+    def get(self, request, pk):
+        news = self.get_object(pk)
+        if news is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = NewsSerializer(news)
+        return Response(serializer.data)
+    
+    def delete(self, request, pk):
+        news = self.get_object(pk)
+        if news is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        news.delete()
+        return Response({"detail": "delete success"})
+
+
+class NewsAddListView(APIView):
+    def get(self, request):
+        news = News.objects.all()
+        serializer = NewsSerializer(news, many=True)
+
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = NewsSerializer(data=request.data)
+        if serializer.is_valid():
+            news = serializer.save()
+            return Response({"detail": "save success", "news_id": news.id})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -13,4 +13,7 @@ urlpatterns = [
     path("<int:news_id>/delete", views.delete_news, name="delete_news"),
     path("<int:comment_id>/delete", views.delete_comment, name="delete_comment"),
 
+    # path("api/add", views.api_add, name="api_add"),
+    path("api/news", views.NewsAddListView.as_view(), name="api_list"),
+    path("api/news/<int:pk>/", views.NewsDetailView.as_view(), name="api_news_detail"),
 ]
