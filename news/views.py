@@ -1,10 +1,8 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404, reverse, redirect
-from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.views import View
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
-
 
 
 from .models import News, Comment
@@ -17,10 +15,12 @@ def sign_up(request):
        form = SignUpForm(request.POST)
        if form.is_valid():
            user = form.save()
-           group = Group.objects.get(name="default")
+
+           group = Group.objects.get(name='Default')
            group.user_set.add(user)
+           
            login(request, user)
-           return redirect('/news')
+           return redirect("/news")
    else:
        form = SignUpForm()
 
@@ -59,7 +59,7 @@ def post_comment(request, news_id):
         new_comment.save()
         db_news.save()
         
-        return HttpResponseRedirect(reverse("news:detail", args=(db_news.id,)))
+        return redirect(reverse("news:detail", args=(db_news.id,)))
 
     return render(request, "news/post_comment.html", {"news_id": news_id})
 
@@ -73,7 +73,7 @@ def post_news(request):
             news.author = request.user
             news.save()
 
-            return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))
+            return redirect(reverse("news:detail", args=(news.id,)))
 
     return render(request, "news/post_news.html")
 
@@ -94,7 +94,7 @@ def post_news(request):
 #             news.content = content
 #             news.save()
 
-#             return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))
+#             return redirect(reverse("news:detail", args=(news.id,)))
 
 @login_required(login_url="/login")
 @permission_required("news.edit_news", login_url="/login/")
@@ -110,7 +110,7 @@ def update_news(request, news_id):
                 news.content = content
                 news.save()
 
-                return HttpResponseRedirect(reverse("news:detail", args=(news.id,)))
+                return redirect(reverse("news:detail", args=(news.id,)))
 
     return render(request, "news/update_news.html", {"form": form, "news": news})
 
