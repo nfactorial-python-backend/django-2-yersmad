@@ -133,15 +133,15 @@ def delete_news(request, news_id):
         return redirect(reverse("news:index"))
 
 
-@login_required(login_url="/login")
-@permission_required("comment.delete_comment", login_url="/login/")
-def delete_comment(request, comment_id):
-    comment = get_object_or_404(Comment, pk=comment_id)
+@permission_required("news.delete_comment", login_url="/login")
+def delete_comment(request, news_id, comment_id):
+    news_db = get_object_or_404(News, pk=news_id)
+    comment_db = get_object_or_404(Comment, pk=comment_id)
     if request.method == "POST":
-        if request.user == comment.author or request.user.has_perm("comment.delete_comment"):
-            comment.delete()
+        if request.user.username == comment_db.author.username or request.user.has_perm("news.delete_comment"):
+            comment_db.delete()
 
-        return redirect(reverse("news:news"))
+    return redirect(reverse("news:detail", args=(news_db.id,)))
 
 
 @permission_classes([IsAuthenticated])

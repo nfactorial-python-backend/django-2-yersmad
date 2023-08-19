@@ -14,7 +14,7 @@
                     </h5>
                   </div>
                   <div>
-                    {% if user == new.author or perms.new.delete_news %}
+                    {% if user == new.author or perms.news.delete_news %}
                         <form action="{% url 'news:delete_news' new.id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger" >Delete this news</button>

@@ -25,11 +25,11 @@
     {% for comment in comments %}
     <li>
         {{ comment.content }} |
-        Created: {{ comment.created_at }}
+        Author: {{ comment.author }}
 
-        {% if user == comment.author or perms.comment.delete_comments %}
+        {% if user == comment.author or perms.news.delete_comment %}
 
-        <form action="{% url 'news:delete_comment' comment.id %}" method="post">
+        <form action="{% url 'news:delete_comment' news.id comment.id %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Delete this comment</button>
         </form>
