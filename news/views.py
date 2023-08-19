@@ -144,7 +144,6 @@ def delete_comment(request, news_id, comment_id):
     return redirect(reverse("news:detail", args=(news.id,)))
 
 
-@permission_classes([IsAuthenticated])
 class NewsDetailView(APIView):
     def get_object(self, pk):
        try:
@@ -169,16 +168,12 @@ class NewsDetailView(APIView):
         return Response({"detail": "delete success"})
 
 
-class NewsAddListView(APIView):
-    def get(self, request):
-        news = News.objects.all()
-        serializer = NewsSerializer(news, many=True)
+class NewsAddListView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = NewsSerializer(data=request.data)
-        if serializer.is_valid():
-            news = serializer.save()
-            return Response({"detail": "save success", "news_id": news.id})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
